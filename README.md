@@ -1,11 +1,24 @@
 # Tawakkalna Message
 
-A Laravel package to send targeted and private messages to Tawakkalna users using the user's ID or residency number as the primary identifier, or the mobile number as an optional identifier. It also provides the ability to track the status of the sent message.
+A Laravel package for sending targeted and private messages to Tawakkalna users using the user's ID or residency number as the primary identifier, or the mobile number as an optional identifier. It also provides the ability to track the status of the sent message.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/abather/tawakkalna-message.svg?style=flat-square)](https://packagist.org/packages/abather/tawakkalna-message)
 [![Total Downloads](https://img.shields.io/packagist/dt/abather/tawakkalna-message.svg?style=flat-square)](https://packagist.org/packages/abather/tawakkalna-message)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/abather/tawakkalna-message/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/abather/tawakkalna-message/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/abather/tawakkalna-message/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/abather/tawakkalna-message/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 
 This package provides seamless integration with the Tawakkalna messaging API, allowing you to send notifications directly to users through the official Saudi Arabian government application. Perfect for government services, businesses, and organizations that need to communicate with users in Saudi Arabia.
+
+## Features
+
+- ✅ Send messages using national ID or residency number
+- ✅ Optional phone number as secondary identifier
+- ✅ Support for both Bearer token and Basic authentication
+- ✅ Laravel notification channel integration
+- ✅ On-demand notifications support
+- ✅ Customizable user routing
+- ✅ Comprehensive test suite
+- ✅ PHP 8.3+ and Laravel 11+ support
 
 ## Installation
 
@@ -98,6 +111,18 @@ $user = User::find(1);
 $user->notify(new WelcomeNotification());
 ```
 
+### On-Demand Notifications
+
+As per Laravel documentation, you can send notifications on-demand without associating them with a specific user:
+
+```php
+use App\Notifications\WelcomeNotification;
+use Illuminate\Support\Facades\Notification;
+
+Notification::route('tawakkalna-message', '2018603478')
+    ->notify(new WelcomeNotification());
+```
+
 ## User Identification
 
 The package uses user identifiers to route messages. You can configure this in several ways:
@@ -134,9 +159,22 @@ class User extends Authenticatable
 }
 ```
 
+## API Documentation
+
+For detailed information about the Tawakkalna API endpoints, authentication methods, and message formats, please refer to the official Tawakkalna API documentation.
+
+## Error Handling
+
+The package handles various error scenarios:
+
+- **Invalid credentials**: Throws authentication exceptions
+- **Invalid user identifiers**: Returns appropriate error responses
+- **Network issues**: Provides retry mechanisms
+- **Rate limiting**: Respects API rate limits
+
 ## Requirements
 
-- PHP ^8.4
+- PHP ^8.3
 - Laravel ^11.0 || ^12.0
 - Valid Tawakkalna API credentials
 
@@ -156,12 +194,24 @@ composer test-coverage
 
 ## Available Scripts
 
+The package includes several useful Composer scripts:
+
 ```bash
-composer test          # Run tests
-composer test-coverage  # Run tests with coverage
-composer format         # Format code with Pint
-composer analyse        # Run static analysis
+composer test           # Run PHPUnit/Pest tests
+composer test-coverage  # Run tests with coverage report
+composer format         # Format code with Laravel Pint
+composer analyse        # Run static analysis with PHPStan
 ```
+
+## Roadmap
+
+Future enhancements planned for this package:
+
+- [ ] Message templates support
+- [ ] Batch messaging capabilities
+- [ ] Enhanced error logging
+- [ ] Message delivery status tracking
+- [ ] Queue integration for bulk operations
 
 ## Changelog
 
@@ -169,16 +219,33 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+We welcome contributions! Please see [CONTRIBUTING](CONTRIBUTING.md) for details on how to contribute to this project.
+
+Before contributing:
+- Fork the repository
+- Create a feature branch
+- Run tests with `composer test`
+- Ensure code style with `composer format`
+- Submit a pull request
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+If you discover a security vulnerability within this package, please send an email to Mohammed Aljuraysh at m.abather@gmail.com. All security vulnerabilities will be promptly addressed.
+
+Please review [our security policy](../../security/policy) for more details on how to report security vulnerabilities.
+
+## Support
+
+If you need help or have questions:
+
+- Check the [documentation](README.md)
+- Open an [issue on GitHub](https://github.com/abather/tawakkalna-message/issues)
+- Contact the maintainer at m.abather@gmail.com
 
 ## Credits
 
-- [Mohammed Aljuraysh](https://github.com/Abather)
-- [All Contributors](../../contributors)
+- [Mohammed Aljuraysh](https://github.com/Abather) - Creator and maintainer
+- [All Contributors](../../contributors) - Thank you for your contributions!
 
 ## License
 
