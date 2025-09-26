@@ -1,74 +1,166 @@
-# :package_description
+# Tawakkalna Message
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+A Laravel package to send targeted and private messages to Tawakkalna users using the user's ID or residency number as the primary identifier, or the mobile number as an optional identifier. It also provides the ability to track the status of the sent message.
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/abather/tawakkalna-message.svg?style=flat-square)](https://packagist.org/packages/abather/tawakkalna-message)
+[![Total Downloads](https://img.shields.io/packagist/dt/abather/tawakkalna-message.svg?style=flat-square)](https://packagist.org/packages/abather/tawakkalna-message)
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+This package provides seamless integration with the Tawakkalna messaging API, allowing you to send notifications directly to users through the official Saudi Arabian government application. Perfect for government services, businesses, and organizations that need to communicate with users in Saudi Arabia.
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require abather/tawakkalna-message
 ```
 
-You can publish and run the migrations with:
+You can publish and configure the package:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
+php artisan vendor:publish --tag="tawakkalna-message-config"
 ```
 
-You can publish the config file with:
+## Configuration
 
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
+After publishing, configure your environment variables in `.env`:
+
+```env
+TAWAKKALNA_TOKEN=your_api_token_here
 ```
 
-This is the contents of the published config file:
+The published config file contains:
 
 ```php
 return [
+    "base_url" => env("TAWAKKALNA_BASE_URL", "https://external.api.tawakkalna.nic.gov.sa/messaging/v1"),
+
+    // Authorization Method: bearer or basic
+    'authorization_method' => env("TAWAKKALNA_AUTHORIZATION_METHOD", "bearer"),
+
+    // Required when authorization method is bearer
+    'token' => env("TAWAKKALNA_TOKEN"),
+
+    // Required when authorization method is basic
+    'username' => env("TAWAKKALNA_USERNAME"),
+    'password' => env("TAWAKKALNA_PASSWORD"),
+
+    // Default identifier attribute (national_id, residency_number, etc.)
+    'identifier_attribute' => env("TAWAKKALNA_IDENTIFIER_ATTRIBUTE", "national_id")
 ];
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
 ```
 
 ## Usage
 
+### Basic Usage
+
+To send messages through Tawakkalna, implement the `toTawakkalna` method in your notification class:
+
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+use Abather\TawakkalnaMessage\TawakkalnaMessage;
+use Abather\TawakkalnaMessage\TawakkalnaMessageChannel;
+use Illuminate\Notifications\Notification;
+
+class WelcomeNotification extends Notification
+{
+    public function via($notifiable)
+    {
+        return [TawakkalnaMessageChannel::class];
+    }
+
+    public function toTawakkalna($notifiable): TawakkalnaMessage
+    {
+        return TawakkalnaMessage::make("Welcome to our service!")
+            ->phone($notifiable->phone); // Optional: provide phone number
+    }
+}
 ```
+
+### Simple Text Message
+
+For simple messages, you can return a string directly:
+
+```php
+public function toTawakkalna($notifiable): string
+{
+    return "Your verification code is: 123456";
+}
+```
+
+### Complete Example
+
+```php
+use App\Models\User;
+use App\Notifications\WelcomeNotification;
+
+// Send notification to a user
+$user = User::find(1);
+$user->notify(new WelcomeNotification());
+```
+
+## User Identification
+
+The package uses user identifiers to route messages. You can configure this in several ways:
+
+### Global Configuration
+
+Set the default identifier attribute in your config file:
+
+```php
+'identifier_attribute' => 'national_id', // or 'residency_number'
+```
+
+### Per-User Routing
+
+You can customize the identifier for each user by implementing routing methods in your User model:
+
+```php
+class User extends Authenticatable
+{
+    // Method 1: Specific to Tawakkalna
+    public function routeNotificationForTawakkalna(): string
+    {
+        return $this->national_id; // or $this->residency_number
+    }
+
+    // Method 2: Using the channel class
+    public function routeNotificationFor($driver)
+    {
+        if ($driver === TawakkalnaMessageChannel::class) {
+            return $this->national_id;
+        }
+        return parent::routeNotificationFor($driver);
+    }
+}
+```
+
+## Requirements
+
+- PHP ^8.4
+- Laravel ^11.0 || ^12.0
+- Valid Tawakkalna API credentials
 
 ## Testing
 
+Run the package tests:
+
 ```bash
 composer test
+```
+
+Run tests with coverage:
+
+```bash
+composer test-coverage
+```
+
+## Available Scripts
+
+```bash
+composer test          # Run tests
+composer test-coverage  # Run tests with coverage
+composer format         # Format code with Pint
+composer analyse        # Run static analysis
 ```
 
 ## Changelog
@@ -85,7 +177,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [Mohammed Aljuraysh](https://github.com/Abather)
 - [All Contributors](../../contributors)
 
 ## License
