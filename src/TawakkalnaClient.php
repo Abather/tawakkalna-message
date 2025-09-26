@@ -7,14 +7,15 @@ use Illuminate\Support\Facades\Http;
 class TawakkalnaClient
 {
     private $client;
+
     private $token;
 
     public function __construct()
     {
         $this->client = Http::withHeaders([
-            "Content-Type" => " application/json",
+            'Content-Type' => ' application/json',
         ])
-            ->baseUrl(config("tawakkalna-message.base_url"))
+            ->baseUrl(config('tawakkalna-message.base_url'))
             ->acceptJson();
 
         $this->setAuthorization();
@@ -22,15 +23,15 @@ class TawakkalnaClient
 
     public function setAuthorization(): void
     {
-        config("tawakkalna-message.authorization_method") === "bearer" ? $this->setBearerAuth() : $this->setBasicAuth();
+        config('tawakkalna-message.authorization_method') === 'bearer' ? $this->setBearerAuth() : $this->setBasicAuth();
     }
 
     private function setBearerAuth(): void
     {
-        $token = config("tawakkalna-message.token");
+        $token = config('tawakkalna-message.token');
 
-        if (!$token) {
-            throw new \Exception("TawakkalnaMessage Token is not configured");
+        if (! $token) {
+            throw new \Exception('TawakkalnaMessage Token is not configured');
         }
 
         $this->client->withToken($token);
@@ -38,11 +39,11 @@ class TawakkalnaClient
 
     private function setBasicAuth()
     {
-        $username = config("tawakkalna-message.username");
-        $password = config("tawakkalna-message.password");
+        $username = config('tawakkalna-message.username');
+        $password = config('tawakkalna-message.password');
 
-        if (!$username || !$password) {
-            throw new \Exception("TawakkalnaMessage Basic Auth is not configured");
+        if (! $username || ! $password) {
+            throw new \Exception('TawakkalnaMessage Basic Auth is not configured');
         }
 
         $this->client->withBasicAuth($username, $password);
@@ -51,10 +52,10 @@ class TawakkalnaClient
     public function sendMessage($message, $identifier, $phone = null)
     {
         return $this->client
-            ->post("messages", [
-                "nationalId" => $identifier,
-                "mobileNumber" => $phone,
-                "content" => $message
+            ->post('messages', [
+                'nationalId' => $identifier,
+                'mobileNumber' => $phone,
+                'content' => $message,
             ])
             ->json();
     }
