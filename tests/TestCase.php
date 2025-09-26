@@ -2,9 +2,9 @@
 
 namespace Abather\TawakkalnaMessage\Tests;
 
+use Abather\TawakkalnaMessage\TawakkalnaMessageServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Abather\TawakkalnaMessage\TawakkalnaMessageServiceProvider;
 
 class TestCase extends Orchestra
 {

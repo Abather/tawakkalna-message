@@ -12,23 +12,23 @@ class TawakkalnaMessageChannel
     {
         $receiver = $this->routeNotification($notifiable);
 
-        if (!$receiver) {
+        if (! $receiver) {
             return;
         }
 
         $message = $notification->toTawakkalna($notifiable);
 
-        if (!$message) {
+        if (! $message) {
             return;
         }
 
         if (is_string($message)) {
             $message = TawakkalnaMessage::make($message);
-        } elseif (!$message instanceof TawakkalnaMessage) {
+        } elseif (! $message instanceof TawakkalnaMessage) {
             return;
         }
 
-        $client = new TawakkalnaClient();
+        $client = new TawakkalnaClient;
         $client->sendMessage($message->getMessage(), $receiver, $message->getPhone());
     }
 
@@ -36,19 +36,19 @@ class TawakkalnaMessageChannel
     {
         $receiver = $notifiable->routeNotificationFor('tawakkalna-message');
 
-        if (!$receiver) {
+        if (! $receiver) {
             $receiver = $notifiable->routeNotificationFor(TawakkalnaMessageChannel::class);
         }
 
-        if (!$receiver) {
+        if (! $receiver) {
             $receiver = $notifiable->routeNotificationForTawakkalna();
         }
 
-        if (!$receiver) {
-            $receiver = config("tawakkalna-message.identifier_attribute");
+        if (! $receiver) {
+            $receiver = config('tawakkalna-message.identifier_attribute');
         }
 
-        if (!$receiver) {
+        if (! $receiver) {
             return null;
         }
 
