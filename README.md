@@ -203,16 +203,6 @@ composer format         # Format code with Laravel Pint
 composer analyse        # Run static analysis with PHPStan
 ```
 
-## Roadmap
-
-Future enhancements planned for this package:
-
-- [ ] Message templates support
-- [ ] Batch messaging capabilities
-- [ ] Enhanced error logging
-- [ ] Message delivery status tracking
-- [ ] Queue integration for bulk operations
-
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
