@@ -37,6 +37,17 @@ class TawakkalnaMessage
         return $this->phone;
     }
 
+    public function validateMessage(): bool
+    {
+        $length = str($this->getMessage())->length();
+
+        if ($length > 4000) {
+            throw new \Exception('Message excuse max length 4000 characters');
+        }
+
+        return true;
+    }
+
     public static function make(...$attributes): static
     {
         return new static(...$attributes);

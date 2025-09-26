@@ -28,6 +28,8 @@ class TawakkalnaMessageChannel
             return;
         }
 
+        $message->validateMessage();
+
         $client = new TawakkalnaClient;
         $client->sendMessage($message->getMessage(), $receiver, $message->getPhone());
     }
