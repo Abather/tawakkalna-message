@@ -2,9 +2,9 @@
 
 namespace Abather\TawakkalnaMessage;
 
+use Abather\TawakkalnaMessage\Commands\TawakkalnaMessageCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Abather\TawakkalnaMessage\Commands\TawakkalnaMessageCommand;
 
 class TawakkalnaMessageServiceProvider extends PackageServiceProvider
 {

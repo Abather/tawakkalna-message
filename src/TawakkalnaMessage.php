@@ -5,6 +5,7 @@ namespace Abather\TawakkalnaMessage;
 class TawakkalnaMessage
 {
     protected $message;
+
     protected $phone;
 
     public function __construct(string $message)
@@ -24,9 +25,10 @@ class TawakkalnaMessage
         return $this->message;
     }
 
-    public function phone(string $phone):static
+    public function phone(string $phone): static
     {
         $this->phone = $phone;
+
         return $this;
     }
 
