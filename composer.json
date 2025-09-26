@@ -1,6 +1,7 @@
 {
     "name": "abather/tawakkalna-message",
     "description": "send targeted and private messages to Tawakkalna users using the user's ID or residency number as the primary identifier, or the mobile number as an optional identifier. It also provides the ability to track the status of the sent message.",
+    "version" : "1.0.0",
     "keywords": [
         "Mohammed Aljuraysh",
         "laravel",
