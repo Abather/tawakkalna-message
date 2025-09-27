@@ -49,13 +49,13 @@ class TawakkalnaClient
         $this->client->withBasicAuth($username, $password);
     }
 
-    public function sendMessage($message, $identifier, $phone = null)
+    public function sendMessage(TawakkalnaMessage $message)
     {
         return $this->client
             ->post('messages', [
-                'nationalId' => $identifier,
-                'mobileNumber' => $phone,
-                'content' => $message,
+                'nationalId' => $message->getReceiver(),
+                'mobileNumber' => $message->getPhone(),
+                'content' => $message->getMessage(),
             ])
             ->json();
     }

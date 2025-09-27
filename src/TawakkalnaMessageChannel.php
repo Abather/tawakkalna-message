@@ -28,10 +28,12 @@ class TawakkalnaMessageChannel
             return;
         }
 
-        $message->validateMessage();
+        $message->receiver($receiver);
+
+        $message->validate();
 
         TawakkalnaClient::make()
-            ->sendMessage($message->getMessage(), $receiver, $message->getPhone());
+            ->sendMessage($message);
     }
 
     private function routeNotification($notifiable): ?string
