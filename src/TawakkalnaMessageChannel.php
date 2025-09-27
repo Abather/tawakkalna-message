@@ -8,7 +8,6 @@ class TawakkalnaMessageChannel
 {
     protected TawakkalnaClient $client;
 
-
     public function __construct()
     {
         $this->client = TawakkalnaClient::make();
