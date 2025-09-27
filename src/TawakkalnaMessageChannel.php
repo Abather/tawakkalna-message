@@ -30,8 +30,8 @@ class TawakkalnaMessageChannel
 
         $message->validateMessage();
 
-        $client = new TawakkalnaClient;
-        $client->sendMessage($message->getMessage(), $receiver, $message->getPhone());
+        TawakkalnaClient::make()
+            ->sendMessage($message->getMessage(), $receiver, $message->getPhone());
     }
 
     private function routeNotification($notifiable): ?string
