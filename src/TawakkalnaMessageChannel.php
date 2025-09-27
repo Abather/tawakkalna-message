@@ -8,6 +8,12 @@ class TawakkalnaMessageChannel
 {
     protected TawakkalnaClient $client;
 
+
+    public function __construct()
+    {
+        $this->client = TawakkalnaClient::make();
+    }
+
     public function send($notifiable, Notification $notification)
     {
         $receiver = $this->routeNotification($notifiable);
@@ -32,8 +38,7 @@ class TawakkalnaMessageChannel
 
         $message->validate();
 
-        TawakkalnaClient::make()
-            ->sendMessage($message);
+        $this->client->sendMessage($message);
     }
 
     private function routeNotification($notifiable): ?string
