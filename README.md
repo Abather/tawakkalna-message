@@ -159,6 +159,50 @@ class User extends Authenticatable
 }
 ```
 
+## Check Message Status
+
+You can track and monitor the delivery status of sent messages using the `messageStatus` method. This is essential for ensuring message delivery and handling failed deliveries appropriately.
+
+### Basic Status Check
+
+```php
+use Abather\TawakkalnaMessage\TawakkalnaClient;
+
+// Check status by message ID
+$status = TawakkalnaClient::make()->messageStatus($messageId);
+```
+
+### Complete Example with Error Handling
+
+```php
+use Abather\TawakkalnaMessage\TawakkalnaClient;
+use Illuminate\Support\Facades\Log;
+
+try {
+    $client = TawakkalnaClient::make();
+    $status = $client->messageStatus($messageId);
+
+    // Handle different status responses
+    if ($status['success']) {
+        Log::info('Message delivered successfully', ['message_id' => $messageId]);
+    } else {
+        Log::warning('Message delivery failed', [
+            'message_id' => $messageId,
+            'status' => $status
+        ]);
+    }
+} catch (\Exception $e) {
+    Log::error('Failed to check message status', [
+        'message_id' => $messageId,
+        'error' => $e->getMessage()
+    ]);
+}
+```
+
+### Status Response Format
+
+The `messageStatus` method returns a structured response containing delivery information. Check the official Tawakkalna API documentation for detailed response format and status codes.
+
 ## API Documentation
 
 For detailed information about the Tawakkalna API endpoints, authentication methods, and message formats, please refer to the official Tawakkalna API documentation.

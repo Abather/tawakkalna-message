@@ -66,4 +66,9 @@ class TawakkalnaClient
             ->get("messages/$id/status")
             ->json();
     }
+
+    public static function make(...$attributes): static
+    {
+        return new static(...$attributes);
+    }
 }
